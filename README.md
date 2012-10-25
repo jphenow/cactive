@@ -1,24 +1,23 @@
 # Cactive
 
-TODO: Write a gem description
+This is my playground for experimenting with Ruby C Extensions. I generally
+require some project, or direction to learn things so I decided to work on implementing
+ActiveSupport::CoreExtensions in C. No, I'm not saying this should be a widely used Gem,
+nor that Core Extensions (even in Ruby) are good. I mostly think its a
+good way to dig my hands deep into the Ruby C APIs and figure out what the hell
+Ruby does to make my days awesome.
+
+Suggestions, comments or concerns? Check out the issues page.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'cactive'
+    gem 'cactive', git: "http://github.com/jphenow/cactive.git"
 
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install cactive
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
