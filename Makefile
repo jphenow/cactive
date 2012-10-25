@@ -11,7 +11,7 @@ ECHO = $(ECHO1:0=@echo)
 
 #### Start of system configuration section. ####
 
-srcdir = .
+srcdir = ext/cactive_array
 topdir = /Users/jonphenow/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1
 hdrdir = /Users/jonphenow/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1
 arch_hdrdir = /Users/jonphenow/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/$(arch)
@@ -112,13 +112,13 @@ DISTCLEANDIRS =
 
 extout = 
 extout_prefix = 
-target_prefix = 
+target_prefix = /cactive
 LOCAL_LIBS = 
 LIBS = $(LIBRUBYARG_SHARED)  -lpthread -ldl -lobjc 
-SRCS = 
-OBJS = 
-TARGET = 
-DLLIB = 
+SRCS = cactive_array.c
+OBJS = cactive_array.o
+TARGET = cactive_array
+DLLIB = $(TARGET).bundle
 EXTSTATIC = 
 STATIC_LIB = 
 
@@ -133,7 +133,7 @@ TARGET_SO     = $(DLLIB)
 CLEANLIBS     = $(TARGET).bundle 
 CLEANOBJS     = *.o  *.bak
 
-all:    Makefile
+all:    $(DLLIB)
 static: $(STATIC_LIB)
 .PHONY: all install static install-so install-rb
 .PHONY: clean clean-so clean-rb
@@ -155,27 +155,59 @@ distclean: clean distclean-so distclean-rb-default distclean-rb
 realclean: distclean
 install: install-so install-rb
 
-install-so: Makefile
+install-so: $(RUBYARCHDIR)
+install-so: $(RUBYARCHDIR)/$(DLLIB)
+$(RUBYARCHDIR)/$(DLLIB): $(DLLIB)
+	@-$(MAKEDIRS) $(@D)
+	$(INSTALL_PROG) $(DLLIB) $(@D)
 install-rb: pre-install-rb install-rb-default
 install-rb-default: pre-install-rb-default
 pre-install-rb: Makefile
 pre-install-rb-default: Makefile
-pre-install-rb-default: $(RUBYLIBDIR)/cactive
-install-rb-default: $(RUBYLIBDIR)/cactive/version.rb $(RUBYLIBDIR)/cactive
-$(RUBYLIBDIR)/cactive/version.rb: $(srcdir)/lib/cactive/version.rb
-	$(Q) $(INSTALL_DATA) $(srcdir)/lib/cactive/version.rb $(@D)
-pre-install-rb-default: $(RUBYLIBDIR)
-install-rb-default: $(RUBYLIBDIR)/cactive.rb $(RUBYLIBDIR)
-$(RUBYLIBDIR)/cactive.rb: $(srcdir)/lib/cactive.rb
-	$(Q) $(INSTALL_DATA) $(srcdir)/lib/cactive.rb $(@D)
 pre-install-rb-default:
-	$(ECHO) installing default  libraries
-$(RUBYLIBDIR)/cactive:
-	$(Q) $(MAKEDIRS) $@
-$(RUBYLIBDIR):
+	$(ECHO) installing default cactive_array libraries
+$(RUBYARCHDIR):
 	$(Q) $(MAKEDIRS) $@
 
 site-install: site-install-so site-install-rb
 site-install-so: install-so
 site-install-rb: install-rb
 
+.SUFFIXES: .c .m .cc .mm .cxx .cpp .C .o
+
+.cc.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $<
+
+.mm.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $<
+
+.cxx.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $<
+
+.cpp.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $<
+
+.C.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $<
+
+.c.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) $(COUTFLAG)$@ -c $<
+
+.m.o:
+	$(ECHO) compiling $(<)
+	$(Q) $(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) $(COUTFLAG)$@ -c $<
+
+$(DLLIB): $(OBJS) Makefile
+	$(ECHO) linking shared-object cactive/$(DLLIB)
+	@-$(RM) $(@)
+	$(Q) $(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
+
+
+
+$(OBJS): $(hdrdir)/ruby.h $(hdrdir)/ruby/defines.h $(arch_hdrdir)/ruby/config.h
