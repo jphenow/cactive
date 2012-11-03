@@ -18,7 +18,7 @@ VALUE method_fifth(VALUE self);
 VALUE method_forty_two(VALUE self);
 
 // The initialization method for this module
-void Init_access() {
+void Init_array() {
   //CactiveArray = rb_define_class("Array", rb_cObject);
   rb_define_method(rb_cArray, "from", method_from, 1);
   rb_define_method(rb_cArray, "to", method_to, 1);

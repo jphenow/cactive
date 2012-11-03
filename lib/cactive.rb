@@ -1,5 +1,5 @@
 require "cactive/version"
-require 'cactive/array/access'
+require 'cactive/array'
 
 module Cactive
   # Your code goes here...
