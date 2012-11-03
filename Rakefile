@@ -7,3 +7,9 @@ Rake::ExtensionTask.new('array') do |ext|
   ext.lib_dir = File.join 'lib', 'cactive'
   ext.name = 'array'
 end
+
+Rake::ExtensionTask.new('string') do |ext|
+  ext.ext_dir = File.join 'ext', 'string'
+  ext.lib_dir = File.join 'lib', 'cactive'
+  ext.name = 'string'
+end
