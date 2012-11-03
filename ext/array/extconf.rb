@@ -2,7 +2,7 @@
 require 'mkmf'
 
 # Give it a name
-extension_name = 'array_access'
+extension_name = 'cactive/array'
 
 # The destination
 dir_config(extension_name)

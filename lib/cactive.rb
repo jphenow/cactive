@@ -1,6 +1,5 @@
 require "cactive/version"
-
-Dir.glob("lib/ext/**/*.bundle") { |f| require f.to_s.gsub(/\.bundle/, '') }
+require 'cactive/array/access'
 
 module Cactive
   # Your code goes here...
