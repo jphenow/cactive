@@ -18,47 +18,75 @@ void Init_string() {
   /*rb_define_method(rb_cString, "last", method_last, 0);*/
 }
 
-// TODO Yes re-impleneted from array.c .... would love a better way plx thx
-VALUE rb_ary_aref(int argc, VALUE *argv, VALUE ary) {
-  VALUE arg;
-  long beg, len;
+static VALUE
+rb_str_aref(VALUE str, VALUE indx)
+{
+    long idx;
 
-  if (argc == 2) {
-    beg = NUM2LONG(argv[0]);
-    len = NUM2LONG(argv[1]);
-    if (beg < 0) {
-      beg += RARRAY_LEN(ary);
+    if (FIXNUM_P(indx)) {
+	idx = FIX2LONG(indx);
+
+      num_index:
+	str = rb_str_substr(str, idx, 1);
+	if (!NIL_P(str) && RSTRING_LEN(str) == 0) return Qnil;
+	return str;
     }
-    return rb_ary_subseq(ary, beg, len);
-  }
-  if (argc != 1) {
-    rb_scan_args(argc, argv, "11", 0, 0);
-  }
-  arg = argv[0];
-  /* special case - speeding up */
-  if (FIXNUM_P(arg)) {
-    return rb_ary_entry(ary, FIX2LONG(arg));
-  }
-  /* check if idx is Range */
-  switch (rb_range_beg_len(arg, &beg, &len, RARRAY_LEN(ary), 0)) {
-    case Qfalse:
-      break;
-    case Qnil:
-      return Qnil;
-    default:
-      return rb_ary_subseq(ary, beg, len);
-  }
-  return rb_ary_entry(ary, NUM2LONG(arg));
+
+    if (SPECIAL_CONST_P(indx)) goto generic;
+    switch (BUILTIN_TYPE(indx)) {
+      case T_REGEXP:
+	return rb_str_subpat(str, indx, INT2FIX(0));
+
+      case T_STRING:
+	if (rb_str_index(str, indx, 0) != -1)
+	    return rb_str_dup(indx);
+	return Qnil;
+
+      generic:
+      default:
+	/* check if indx is Range */
+	{
+	    long beg, len;
+	    VALUE tmp;
+
+	    len = str_strlen(str, STR_ENC_GET(str));
+	    switch (rb_range_beg_len(indx, &beg, &len, len, 0)) {
+	      case Qfalse:
+		break;
+	      case Qnil:
+		return Qnil;
+	      default:
+		tmp = rb_str_substr(str, beg, len);
+		return tmp;
+	    }
+	}
+	idx = NUM2LONG(indx);
+	goto num_index;
+    }
+
+    UNREACHABLE;
 }
 
 VALUE method_from(VALUE self, VALUE position) {
-  VALUE positions[2] = { position, INT2FIX(RSTRING_LEN(self)) };
-  return rb_ary_aref(2, positions, self);
+  end = RSTRING_LEN(self);
+  start = FIX2INT(position);
+  length = end - start;
+  VALUE new_string[length];
+  for(i = start; i < end + 1; i++)
+  {
+    new_string[i-start] = rb_str_aref(i, self);
+  }
+  newstr = rb_str_new(0, length);
+  for(i = 0; i < sizeof(new_string) + 1; i++)
+  {
+    newstr = rb_string_concat(newstr, new_string[i]);
+  }
+  return newstr;
 }
 
 VALUE method_to(VALUE self, VALUE position) {
   VALUE positions[2] = { INT2FIX(0), position };
-  return rb_ary_aref(2, positions, self);
+  return rb_str_aref(2, positions, self);
 }
 
 /*VALUE method_second(VALUE self) {*/
