@@ -115,9 +115,9 @@ extout_prefix =
 target_prefix = 
 LOCAL_LIBS = 
 LIBS = $(LIBRUBYARG_SHARED)  -lpthread -ldl -lobjc 
-SRCS = cactive_array.c
-OBJS = cactive_array.o
-TARGET = cactive_array
+SRCS = access.c
+OBJS = access.o
+TARGET = array_access
 DLLIB = $(TARGET).bundle
 EXTSTATIC = 
 STATIC_LIB = 
@@ -165,7 +165,7 @@ install-rb-default: pre-install-rb-default
 pre-install-rb: Makefile
 pre-install-rb-default: Makefile
 pre-install-rb-default:
-	$(ECHO) installing default cactive_array libraries
+	$(ECHO) installing default array_access libraries
 $(RUBYARCHDIR):
 	$(Q) $(MAKEDIRS) $@
 
