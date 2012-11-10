@@ -1,14 +1,6 @@
 // Include the Ruby headers and goodies
 #include "ruby.h"
 
-// Defining a space for information and references about the module to be stored internally
-//VALUE CactiveArray = Qnil;
-
-// Prototype for the initialization method - Ruby calls this, not you
-//void Init_cactive_array();
-
-// Prototype for our method 'test1' - methods are prefixed by 'method_' here
-//VALUE method_from(VALUE self, VALUE position);
 VALUE method_from(VALUE self, VALUE position);
 VALUE method_to(VALUE self, VALUE position);
 VALUE method_second(VALUE self);
@@ -19,7 +11,6 @@ VALUE method_forty_two(VALUE self);
 
 // The initialization method for this module
 void Init_array() {
-  //CactiveArray = rb_define_class("Array", rb_cObject);
   rb_define_method(rb_cArray, "from", method_from, 1);
   rb_define_method(rb_cArray, "to", method_to, 1);
   rb_define_method(rb_cArray, "second", method_second, 0);
